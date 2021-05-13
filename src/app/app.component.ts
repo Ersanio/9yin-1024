@@ -6,5 +6,12 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  title = 'thousandtwentyfour';
+  private readonly gapX: Number = 10;
+  private readonly gapY: Number = 10;
+
+  //                       x    y                                   value
+  // transform: translate(0px, 0px); background-image: url('../assets/2.png'); height:90px; width: 90px;
+
+
+
 }
