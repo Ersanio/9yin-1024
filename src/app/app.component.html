@@ -1,8 +1,11 @@
 <div id="mobilewrap">
   <div id="container">
     <div class="tiles">
-      <div style="transform: translate(0px, 0px); background-image: url('../assets/2.png'); height:90px; width: 90px;">
-      </div>
+      <ng-container *ngFor="let row of matrix; let y=index;">
+        <ng-container *ngFor="let column of row; let x=index;">
+          <app-tile [posX]='x' [posY]='y' [value]='matrix[y][x]'></app-tile>
+        </ng-container>
+      </ng-container>
     </div>
   </div>
 </div>
