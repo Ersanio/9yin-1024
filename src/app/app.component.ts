@@ -1,15 +1,6 @@
-import { AfterViewInit, Component, HostListener, OnInit, ViewChild } from '@angular/core';
+import { Component, HostListener, OnInit, ViewChild } from '@angular/core';
 import { GridComponent } from './components/grid/grid.component';
-import { Point } from './models/point';
-import { Tile } from './models/tile';
-
-export enum Direction {
-  Left = 0,
-  Up = 1,
-  Right = 2,
-  Down = 3,
-}
-
+import { Direction } from './models/direction';
 
 @Component({
   selector: 'app-root',
@@ -23,7 +14,7 @@ export class AppComponent implements OnInit {
   }
 
   @ViewChild(GridComponent)
-  private grid!: GridComponent;
+  private gridComponent!: GridComponent;
 
   @HostListener('window:keyup', ['$event'])
   keyEvent(event: KeyboardEvent) {
@@ -45,8 +36,7 @@ export class AppComponent implements OnInit {
   }
 
   private moveTiles(direction: Direction) {
-    this.grid.moveTiles(direction);
-    console.log(direction);
+    this.gridComponent.moveTiles(direction);
   }
 
   private mergeTiles() {
