@@ -1,7 +1,5 @@
 <div class="tiles">
-  <ng-container *ngFor="let row of grid.tiles; let y=index;">
-    <ng-container *ngFor="let column of row; let x=index;">
-      <app-tile [posX]='x' [posY]='y' [value]='grid.tiles[y][x].value'></app-tile>
-    </ng-container>
+  <ng-container *ngFor="let row of grid.tiles; let i=index;">
+    <app-tile [tile]='grid.tiles[i]'></app-tile>
   </ng-container>
 </div>
