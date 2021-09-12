@@ -3,56 +3,57 @@ import { Point } from "./point";
 import { Tile } from "./tile";
 
 export class Grid {
-  public tiles: Tile[][];
+  public tiles: Tile[];
   private readonly width: number;
   private readonly height: number;
 
   constructor(width: number, height: number) {
-    this.tiles = [];
     this.width = width;
     this.height = height;
+    this.clearAllTiles();
   }
 
   public setupInitialGrid() {
-    this.clearAllTiles();
     this.generateTilesInRandomEmptyTiles(2);
   }
 
   public setupInitialPredefinedGrid(values: number[][]) {
-    this.clearAllTiles();
     this.generatedPredefinedTiles(values);
   }
 
   public getRelevantTiles(position: Point, vector: Point): Tile[] {
     if (vector.x) {
-      return vector.x === -1 ? this.tiles[position.y].slice(position.x) : [...this.tiles[position.y]].reverse().slice(position.x);
+      return vector.x === -1 ? this.tiles.filter(tile => tile.position.y === position.y).slice(position.x) : [...this.tiles.filter(tile => tile.position.y === position.y)].reverse().slice(position.x);
     }
-    if (vector.y) {
-      const tilesColumn: Tile[] = [];
-      this.tiles.forEach(row => {
-        tilesColumn.push(row.find(tile => tile.position.x === position.x)!);
-      });
 
+    if (vector.y) {
+      const tilesColumn = this.tiles.filter(tile => tile.position.x === position.x);
       return vector.y === -1 ? tilesColumn.slice(position.y) : tilesColumn.reverse().slice(position.y);
     }
     throw new Error("this shouldn't happen");
   }
 
   public getTile(position: Point): Tile {
-    return this.tiles[position.y][position.x];
+    if (this.isPositionOutOfBounds(position)) {
+      throw new Error("Requested tile is out of bounds");
+    }
+    return this.tiles.find(tile => tile.position.x === position.x && tile.position.y === position.y)!;
   }
 
   public setTile(newTile: Tile) {
-    this.tiles[newTile.position.y][newTile.position.x] = newTile;
-  }
-
-  public increaseTileTier(position: Point) {
-    this.tiles[position.y][position.x].value *= 2;
-    this.tiles[position.y][position.x].justPromoted = true;
+    if (this.isPositionOutOfBounds(newTile.position)) {
+      throw new Error("Requested tile is out of bounds");
+    }
+    const index = this.tiles.findIndex(tile => tile.position.x === newTile.position.x && tile.position.y === newTile.position.y);
+    if (index === -1) {
+      throw new Error("Requested cell to set could not be found");
+    }
+    this.tiles[index] = newTile;
   }
 
   public clearTile(position: Point) {
-    this.tiles[position.y][position.x].value = 0;
+    const tile = new Tile(position, 0);
+    this.setTile(tile);
   }
 
   public swapTiles(first: Point, second: Point) {
@@ -70,83 +71,80 @@ export class Grid {
     const vector = this.getVector(direction);
     let moveHasBeenMade = false;
 
-    for (let y = 0; y < 4; y++) {
-      for (let x = 0; x < 4; x++) {
+    for (let tile of this.tiles) {
+      let relevantTiles = this.getRelevantTiles(tile.position, vector);
+      if (relevantTiles.length === 1) {
+        continue;
+      }
 
-        let relevantTiles = this.getRelevantTiles({ x, y }, vector);
-        if (relevantTiles.length === 1) {
+      let currentTileIndex = 0;
+      for (let i = 1; i < relevantTiles.length; i++) {
+        const currentTile = relevantTiles[currentTileIndex];
+
+        // Current tile and next tile are both vacant
+        if (currentTile.value === 0 && relevantTiles[i].value === 0) {
           continue;
         }
 
-        let currentTileIndex = 0;
-        for (let i = 1; i < relevantTiles.length; i++) {
-          const currentTile = relevantTiles[currentTileIndex];
+        // Current tile is occupied, next tile is vacant
+        if (currentTile.value !== 0 && relevantTiles[i].value === 0) {
+          continue;
+        }
 
-          // Current tile and next tile are both vacant
-          if (currentTile.value === 0 && relevantTiles[i].value === 0) {
-            continue;
-          }
+        // Current tile is vacant, next tile is occupied
+        if (currentTile.value === 0 && relevantTiles[i].value !== 0) {
+          this.swapTiles(currentTile.position, relevantTiles[i].position);
+          relevantTiles = this.getRelevantTiles(tile.position, vector);
+          moveHasBeenMade = true;
+          continue;
+        }
 
-          // Current tile is occupied, next tile is vacant
-          if (currentTile.value !== 0 && relevantTiles[i].value === 0) {
-            continue;
-          }
+        // Current tile and next tile are occupied but unequal
+        if (currentTile.value !== relevantTiles[i].value) {
+          currentTileIndex = i;
+          continue;
+        }
 
-          // Current tile is vacant, next tile is occupied
-          if (currentTile.value === 0 && relevantTiles[i].value !== 0) {
-            this.swapTiles(currentTile.position, relevantTiles[i].position);
-            relevantTiles = this.getRelevantTiles({ x, y }, vector);
-            moveHasBeenMade = true;
-            continue;
-          }
-
-          // Current tile and next tile are occupied but unequal
-          if (currentTile.value !== relevantTiles[i].value) {
-            currentTileIndex = i;
-            continue;
-          }
-
-          // Current tile equals next tile, thus a merge is possible
-          if (!relevantTiles[i].justPromoted && currentTile.value === relevantTiles[i].value) {
-            this.increaseTileTier(currentTile.position);
-            this.clearTile(relevantTiles[i].position);
-            relevantTiles = this.getRelevantTiles({ x, y }, vector);
-            moveHasBeenMade = true;
-            continue;
-          }
+        // Current tile equals next tile, thus a merge is possible
+        if (!relevantTiles[i].justPromoted && currentTile.value === relevantTiles[i].value) {
+          currentTile.promote();
+          this.clearTile(relevantTiles[i].position);
+          relevantTiles = this.getRelevantTiles(tile.position, vector);
+          moveHasBeenMade = true;
+          continue;
         }
       }
     }
-
     this.unlockAllTiles();
     return moveHasBeenMade;
   }
 
+  private isPositionOutOfBounds(position: Point): boolean {
+    return !((position.x >= 0 && position.x < this.width) && (position.y >= 0 && position.y < this.height));
+  }
+
   private unlockAllTiles() {
-    this.tiles.forEach(row => {
-      row.forEach(tile => {
-        tile.justPromoted = false;
-      });
+    this.tiles.forEach(tile => {
+      tile.justPromoted = false;
     });
   }
 
   private clearAllTiles() {
     this.tiles = [];
     for (let y = 0; y < this.height; y++) {
-      var row: Tile[] = [];
       for (let x = 0; x < this.width; x++) {
-        row.push(new Tile(new Point(x, y), 0));
+        this.tiles.push(new Tile(new Point(x, y), 0));
       }
-      this.tiles.push(row);
     }
   }
 
   private generatedPredefinedTiles(numbers: number[][]) {
-    for (let y = 0; y < this.height; y++) {
-      for (let x = 0; x < this.width; x++) {
-        this.tiles[y][x] = new Tile(new Point(x, y), numbers[y][x]);
-      }
-    }
+    numbers.forEach((row, y) => {
+      row.forEach((value, x) => {
+        const tile = new Tile(new Point(x, y), value);
+        this.setTile(tile);
+      })
+    })
   }
 
   public generateTilesInRandomEmptyTiles(amount: number) {
@@ -168,15 +166,7 @@ export class Grid {
   }
 
   private getAllEmptyTiles(): Tile[] {
-    let emptyTiles = [];
-    for (let y = 0; y < this.height; y++) {
-      for (let x = 0; x < this.width; x++) {
-        if (this.tiles[y][x].value === 0) {
-          emptyTiles.push(this.tiles[y][x]);
-        }
-      }
-    }
-    return emptyTiles;
+    return this.tiles.filter(tile => tile.value === 0);
   }
 
   private getVector(direction: Direction): Point {

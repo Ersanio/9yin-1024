@@ -329,9 +329,7 @@ describe("Grid suite", () => {
 });
 
 function assertGridEqual(grid: Grid, expectedGrid: number[][]) {
-  grid.tiles.forEach((row) => {
-    row.forEach((col) => {
-      expect(col.value).toBe(expectedGrid[col.position.y][col.position.x]);
-    });
+  grid.tiles.forEach(tile => {
+    expect(tile.value).toBe(expectedGrid[tile.position.y][tile.position.x]);
   });
 }

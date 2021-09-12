@@ -6,7 +6,8 @@ export class Tile {
     public value: number,
     public justPromoted: boolean = false) { }
 
-  toString(): string {
-    return this.value.toString();
+  public promote() {
+    this.value *= 2;
+    this.justPromoted = true;
   }
 }

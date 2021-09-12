@@ -22,7 +22,7 @@ export class GridComponent implements OnInit {
   public moveTiles(direction: Direction) {
     const moveHasBeenMade = this.grid.moveTiles(direction);
     if(moveHasBeenMade) {
-      this.grid.generateTilesInRandomEmptyTiles(2);
+      this.grid.generateTilesInRandomEmptyTiles(1);
     }
   }
 }
