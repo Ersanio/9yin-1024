@@ -47,13 +47,13 @@ describe("Grid suite", () => {
     });
   });
 
-  [{ expectedLength: 4, expectedValues: [2, 2, 2, 64] },
-  { expectedLength: 3, expectedValues: [2, 2, 64] },
-  { expectedLength: 2, expectedValues: [2, 64] },
-  { expectedLength: 1, expectedValues: [64] }].forEach(params => {
-    fit(`should get ${params.expectedLength} relevant tiles when moving right`, () => {
+  [{ expectedLength: 4, expectedValues: [16, 8, 4, 2] },
+  { expectedLength: 3, expectedValues: [8, 4, 2] },
+  { expectedLength: 2, expectedValues: [4, 2] },
+  { expectedLength: 1, expectedValues: [2] }].forEach(params => {
+    it(`should get ${params.expectedLength} relevant tiles when moving right`, () => {
       grid.setupInitialPredefinedGrid([
-        [64, 2, 2, 2],
+        [2, 4, 8, 16],
         [0, 0, 0, 2],
         [0, 0, 2, 0],
         [1024, 512, 256, 128],

@@ -25,7 +25,7 @@ export class Grid {
 
   public getRelevantTiles(position: Point, vector: Point): Tile[] {
     if (vector.x) {
-      return vector.x === -1 ? this.tiles[position.y].slice(position.x) : this.tiles[position.y].slice(position.x).reverse();
+      return vector.x === -1 ? this.tiles[position.y].slice(position.x) : [...this.tiles[position.y]].reverse().slice(position.x);
     }
     if (vector.y) {
       const tilesColumn: Tile[] = [];
