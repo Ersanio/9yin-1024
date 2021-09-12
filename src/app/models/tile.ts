@@ -10,4 +10,8 @@ export class Tile {
     this.value *= 2;
     this.justPromoted = true;
   }
+
+  clear() {
+    this.value = 0;
+  }
 }

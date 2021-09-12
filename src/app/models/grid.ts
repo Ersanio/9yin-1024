@@ -40,31 +40,12 @@ export class Grid {
     return this.tiles.find(tile => tile.position.x === position.x && tile.position.y === position.y)!;
   }
 
-  public setTile(newTile: Tile) {
-    if (this.isPositionOutOfBounds(newTile.position)) {
-      throw new Error("Requested tile is out of bounds");
-    }
-    const index = this.tiles.findIndex(tile => tile.position.x === newTile.position.x && tile.position.y === newTile.position.y);
-    if (index === -1) {
-      throw new Error("Requested cell to set could not be found");
-    }
-    this.tiles[index] = newTile;
-  }
-
-  public clearTile(position: Point) {
-    const tile = new Tile(position, 0);
-    this.setTile(tile);
-  }
-
   public swapTiles(first: Point, second: Point) {
     let tileA = this.getTile(first);
     let tileB = this.getTile(second);
     const temp = tileA.value;
     tileA.value = tileB.value;
     tileB.value = temp;
-
-    this.setTile(tileB);
-    this.setTile(tileA);
   }
 
   moveTiles(direction: Direction): boolean {
@@ -108,7 +89,7 @@ export class Grid {
         // Current tile equals next tile, thus a merge is possible
         if (!relevantTiles[i].justPromoted && currentTile.value === relevantTiles[i].value) {
           currentTile.promote();
-          this.clearTile(relevantTiles[i].position);
+          relevantTiles[i].clear();
           relevantTiles = this.getRelevantTiles(tile.position, vector);
           moveHasBeenMade = true;
           continue;
@@ -142,7 +123,7 @@ export class Grid {
     numbers.forEach((row, y) => {
       row.forEach((value, x) => {
         const tile = new Tile(new Point(x, y), value);
-        this.setTile(tile);
+        this.tiles[y * this.height + x] = tile;
       })
     })
   }

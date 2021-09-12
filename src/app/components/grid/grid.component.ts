@@ -1,9 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Direction } from 'src/app/models/direction';
 import { Grid } from 'src/app/models/grid';
-import { Point } from 'src/app/models/point';
-import { Tile } from 'src/app/models/tile';
-import { Traversals } from 'src/app/models/traversals';
 
 @Component({
   selector: 'app-grid',
