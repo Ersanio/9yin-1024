@@ -9,7 +9,6 @@ import { Grid } from 'src/app/models/grid';
 })
 export class GridComponent implements OnInit {
   public grid: Grid;
-  constructor() { }
 
   ngOnInit(): void {
     this.grid = new Grid(4, 4);
@@ -21,5 +20,9 @@ export class GridComponent implements OnInit {
     if(moveHasBeenMade) {
       this.grid.generateTilesInRandomEmptyTiles(1);
     }
+
+    // TODO: Check if new moves are possible
+    // TODO: Check for presence of 1024 tile
+    // TODO: Make tiles a single spritesheet and use CSS magic to render each tile. Fixes newly introduced tiers appearing as blank for a sec
   }
 }
