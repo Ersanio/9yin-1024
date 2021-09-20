@@ -1,4 +1,4 @@
-import { Component, HostListener, OnInit, ViewChild } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { Direction } from './models/direction';
 import { Grid } from './models/grid';
 
@@ -54,7 +54,7 @@ export class AppComponent implements OnInit {
     }
   }
 
-  // TODO: metadata information for Discord and WhatsApp
+  // Fix up layout
   // TODO: Add support for mobile swiping. be careful to not refresh the page by accident while swiping down.
   // TODO: BONUS BONUS: Persist score count in local storage
   // TODO: BONUS BONUS BONUS: Animate it all
