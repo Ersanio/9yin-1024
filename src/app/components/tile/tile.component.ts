@@ -18,8 +18,8 @@ export class TileComponent {
   public getStyle(): any {
     return {
       transform: 'translate(' + this.getTileX() + 'px, ' + this.getTileY() + 'px)',
-      'background-image': 'url(assets/' + this.tile.value + '.png)'
-     };
+      'background-position-x': `-${(Math.log2(this.tile.value)-1) * 90}px`,
+    };
   }
 
   public getTileX(): number {

@@ -54,7 +54,6 @@ export class AppComponent implements OnInit {
     }
   }
 
-  // TODO: Make tiles a single spritesheet and use CSS magic to render each tile. Fixes newly introduced tiers appearing as blank for a sec
   // TODO: metadata information for Discord and WhatsApp
   // TODO: Add support for mobile swiping. be careful to not refresh the page by accident while swiping down.
   // TODO: BONUS BONUS: Persist score count in local storage
