@@ -1,19 +1,23 @@
-import { Direction } from "./direction";
-import { Point } from "./point";
-import { Tile } from "./tile";
+import { Direction } from './direction';
+import { Point } from './point';
+import { Tile } from './tile';
 
 export class Grid {
-  public tiles: Tile[];
+  private readonly victoryTile: number;
   private readonly width: number;
   private readonly height: number;
 
-  constructor(width: number, height: number) {
+  public tiles: Tile[];
+  public score: number;
+  public moveCount: number;
+
+  constructor(width: number, height: number, victoryTile: number) {
+    this.victoryTile = victoryTile;
     this.width = width;
     this.height = height;
+    this.score = 0;
+    this.moveCount = 0;
     this.clearAllTiles();
-  }
-
-  public setupInitialGrid() {
     this.generateTilesInRandomEmptyTiles(2);
   }
 
@@ -30,29 +34,30 @@ export class Grid {
       const tilesColumn = this.tiles.filter(tile => tile.position.x === position.x);
       return vector.y === -1 ? tilesColumn.slice(position.y) : tilesColumn.reverse().slice(position.y);
     }
-    throw new Error("this shouldn't happen");
+    throw new Error('this shouldn\'t happen');
   }
 
   public getTile(position: Point): Tile {
     if (this.isPositionOutOfBounds(position)) {
-      throw new Error("Requested tile is out of bounds");
+      throw new Error('Requested tile is out of bounds');
     }
     return this.tiles.find(tile => tile.position.x === position.x && tile.position.y === position.y)!;
   }
 
   public swapTiles(first: Point, second: Point) {
-    let tileA = this.getTile(first);
-    let tileB = this.getTile(second);
+    const tileA = this.getTile(first);
+    const tileB = this.getTile(second);
     const temp = tileA.value;
     tileA.value = tileB.value;
     tileB.value = temp;
   }
 
-  moveTiles(direction: Direction): boolean {
+  public moveTiles(direction: Direction, simulation: boolean = false): boolean {
     const vector = this.getVector(direction);
+    const currentGrid = [...this.tiles].map<Tile>(tile => new Tile(new Point(tile.position.x, tile.position.y), tile.value));
     let moveHasBeenMade = false;
 
-    for (let tile of this.tiles) {
+    for (const tile of this.tiles) {
       let relevantTiles = this.getRelevantTiles(tile.position, vector);
       if (relevantTiles.length === 1) {
         continue;
@@ -62,13 +67,10 @@ export class Grid {
       for (let i = 1; i < relevantTiles.length; i++) {
         const currentTile = relevantTiles[currentTileIndex];
 
-        // Current tile and next tile are both vacant
-        if (currentTile.value === 0 && relevantTiles[i].value === 0) {
-          continue;
-        }
-
+        // Current tile and next tile are both vacant, or
         // Current tile is occupied, next tile is vacant
-        if (currentTile.value !== 0 && relevantTiles[i].value === 0) {
+        if ((currentTile.value === 0 && relevantTiles[i].value === 0)
+          || (currentTile.value !== 0 && relevantTiles[i].value === 0)) {
           continue;
         }
 
@@ -92,12 +94,35 @@ export class Grid {
           relevantTiles[i].clear();
           relevantTiles = this.getRelevantTiles(tile.position, vector);
           moveHasBeenMade = true;
+          if (!simulation) {
+            this.score += currentTile.value;
+          }
           continue;
         }
       }
     }
     this.unlockAllTiles();
+
+    if (!simulation && moveHasBeenMade) {
+      this.moveCount++;
+    }
+    else {
+      this.tiles = currentGrid;
+    }
+
     return moveHasBeenMade;
+  }
+
+  /**
+   * Checks if no moves are possible anymore.
+   * @returns Whether the game is over or not.
+   */
+  public checkGameOver(): boolean {
+    return !(this.moveTiles(Direction.Up, true) || this.moveTiles(Direction.Left, true) || this.moveTiles(Direction.Down, true) || this.moveTiles(Direction.Right, true));
+  }
+
+  public checkVictory(): boolean {
+    return this.tiles.findIndex(tile => tile.value >= this.victoryTile) !== -1;
   }
 
   private isPositionOutOfBounds(position: Point): boolean {
@@ -124,13 +149,13 @@ export class Grid {
       row.forEach((value, x) => {
         const tile = new Tile(new Point(x, y), value);
         this.tiles[y * this.height + x] = tile;
-      })
-    })
+      });
+    });
   }
 
   public generateTilesInRandomEmptyTiles(amount: number) {
     for (let i = 0; i < amount; i++) {
-      let tile = this.getRandomEmptyTile();
+      const tile = this.getRandomEmptyTile();
       if (tile?.position.x !== undefined && tile?.position.y !== undefined) {
         tile.value = Math.random() < 0.5 ? 2 : 4;
       }
@@ -138,7 +163,7 @@ export class Grid {
   }
 
   private getRandomEmptyTile(): Tile | undefined {
-    let emptyTiles = this.getAllEmptyTiles();
+    const emptyTiles = this.getAllEmptyTiles();
     if (emptyTiles.length) {
       return emptyTiles[Math.floor(Math.random() * emptyTiles.length)];
     } else {

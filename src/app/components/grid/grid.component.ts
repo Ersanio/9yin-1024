@@ -1,5 +1,4 @@
-import { Component, OnInit } from '@angular/core';
-import { Direction } from 'src/app/models/direction';
+import { Component, Input } from '@angular/core';
 import { Grid } from 'src/app/models/grid';
 
 @Component({
@@ -7,22 +6,7 @@ import { Grid } from 'src/app/models/grid';
   templateUrl: './grid.component.html',
   styleUrls: ['./grid.component.scss']
 })
-export class GridComponent implements OnInit {
+export class GridComponent {
+  @Input()
   public grid: Grid;
-
-  ngOnInit(): void {
-    this.grid = new Grid(4, 4);
-    this.grid.setupInitialGrid();
-  }
-
-  public moveTiles(direction: Direction) {
-    const moveHasBeenMade = this.grid.moveTiles(direction);
-    if(moveHasBeenMade) {
-      this.grid.generateTilesInRandomEmptyTiles(1);
-    }
-
-    // TODO: Check if new moves are possible
-    // TODO: Check for presence of 1024 tile
-    // TODO: Make tiles a single spritesheet and use CSS magic to render each tile. Fixes newly introduced tiers appearing as blank for a sec
-  }
 }

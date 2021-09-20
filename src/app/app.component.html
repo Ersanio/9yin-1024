@@ -1,5 +1,10 @@
 <div id="mobilewrap">
-  <div id="container">
-    <app-grid></app-grid>
+  <div id="grid">
+    <div id="stats">Moves: {{ grid.moveCount }}. Score: {{ grid.score }}. Won: {{ victory }}. Lost: {{ defeat }}.</div>
+    <div id="gamecontainer">
+      <div id="game">
+        <app-grid [grid]='grid'></app-grid>
+      </div>
+    </div>
   </div>
 </div>

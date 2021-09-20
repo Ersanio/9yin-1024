@@ -17,9 +17,9 @@ export class TileComponent {
 
   public getStyle(): any {
     return {
-      'transform': 'translate(' + this.getTileX() + 'px, ' + this.getTileY() + 'px)',
-      'background-image': 'url(assets/' + this.tile.value +'.png)'
-     }
+      transform: 'translate(' + this.getTileX() + 'px, ' + this.getTileY() + 'px)',
+      'background-image': 'url(assets/' + this.tile.value + '.png)'
+     };
   }
 
   public getTileX(): number {

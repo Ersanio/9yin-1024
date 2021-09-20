@@ -1,29 +1,29 @@
-import { Direction } from "./direction";
-import { Grid } from "./grid";
-import { Point } from "./point";
+import { Direction } from './direction';
+import { Grid } from './grid';
+import { Point } from './point';
 
-describe("Grid suite", () => {
-  const grid = new Grid(4, 4);
+describe('Grid suite', () => {
+  const grid = new Grid(4, 4, 1024);
   const leftVector = new Point(-1, 0);
   const rightVector = new Point(1, 0);
   const upVector = new Point(0, -1);
   const downVector = new Point(0, 1);
 
 
-  it("should setup", () => {
+  it('should setup', () => {
     grid.setupInitialPredefinedGrid([
       [2, 4, 0, 0],
       [0, 0, 0, 2],
       [0, 0, 2, 0],
       [1024, 512, 256, 128],
-    ])
+    ]);
 
     const expectedGrid = [
       [2, 4, 0, 0],
       [0, 0, 0, 2],
       [0, 0, 2, 0],
       [1024, 512, 256, 128],
-    ]
+    ];
 
     assertGridEqual(grid, expectedGrid);
   });
@@ -38,7 +38,7 @@ describe("Grid suite", () => {
         [0, 0, 0, 2],
         [0, 0, 2, 0],
         [1024, 512, 256, 128],
-      ])
+      ]);
 
       const relevantTiles = grid.getRelevantTiles(new Point(4 - params.expectedLength, 0), leftVector);
       expect(relevantTiles.length).toBe(params.expectedLength);
@@ -57,7 +57,7 @@ describe("Grid suite", () => {
         [0, 0, 0, 2],
         [0, 0, 2, 0],
         [1024, 512, 256, 128],
-      ])
+      ]);
 
       const relevantTiles = grid.getRelevantTiles(new Point(4 - params.expectedLength, 0), rightVector);
       expect(relevantTiles.length).toBe(params.expectedLength);
@@ -76,7 +76,7 @@ describe("Grid suite", () => {
         [2, 0, 0, 2],
         [8, 0, 2, 0],
         [1024, 512, 256, 128],
-      ])
+      ]);
 
       const relevantTiles = grid.getRelevantTiles(new Point(0, 4 - params.expectedLength), upVector);
       expect(relevantTiles.length).toBe(params.expectedLength);
@@ -95,7 +95,7 @@ describe("Grid suite", () => {
         [2, 0, 0, 2],
         [8, 0, 2, 0],
         [1024, 512, 256, 128],
-      ])
+      ]);
 
       const relevantTiles = grid.getRelevantTiles(new Point(0, 4 - params.expectedLength), downVector);
       expect(relevantTiles.length).toBe(params.expectedLength);
@@ -110,14 +110,14 @@ describe("Grid suite", () => {
       [2, 2, 0, 0],
       [2, 0, 2, 0],
       [2, 0, 0, 2],
-    ])
+    ]);
 
     const expectedGrid = [
       [4, 2, 2, 4],
       [4, 0, 0, 0],
       [0, 0, 0, 0],
       [0, 0, 0, 0],
-    ]
+    ];
 
     grid.moveTiles(Direction.Up);
 
@@ -130,18 +130,43 @@ describe("Grid suite", () => {
       [2, 2, 0, 0],
       [2, 0, 2, 0],
       [2, 0, 0, 2],
-    ])
+    ]);
 
     const expectedGrid = [
       [0, 0, 0, 0],
       [0, 0, 0, 0],
       [4, 0, 0, 0],
       [4, 2, 2, 4],
-    ]
+    ];
 
     grid.moveTiles(Direction.Down);
 
     assertGridEqual(grid, expectedGrid);
+  });
+
+
+  it(`should move tiles down`, () => {
+    grid.setupInitialPredefinedGrid([
+      [2, 0, 0, 2],
+      [2, 2, 0, 0],
+      [2, 0, 2, 0],
+      [2, 0, 0, 2],
+    ]);
+
+    const expectedGrid = [
+      [0, 0, 0, 0],
+      [0, 0, 0, 0],
+      [4, 0, 0, 0],
+      [4, 2, 2, 4],
+    ];
+
+    grid.moveTiles(Direction.Down);
+
+    const gameOver = grid.checkGameOver();
+
+    expect(gameOver).toBeFalse();
+    assertGridEqual(grid, expectedGrid);
+
   });
 
   it(`should move tiles left`, () => {
@@ -150,14 +175,14 @@ describe("Grid suite", () => {
       [2, 2, 0, 0],
       [2, 0, 2, 0],
       [0, 0, 0, 2],
-    ])
+    ]);
 
     const expectedGrid = [
       [4, 0, 0, 0],
       [4, 0, 0, 0],
       [4, 0, 0, 0],
       [2, 0, 0, 0],
-    ]
+    ];
 
     grid.moveTiles(Direction.Left);
 
@@ -170,14 +195,14 @@ describe("Grid suite", () => {
       [2, 2, 0, 0],
       [2, 0, 2, 0],
       [0, 0, 0, 2],
-    ])
+    ]);
 
     const expectedGrid = [
       [0, 0, 0, 4],
       [0, 0, 0, 4],
       [0, 0, 0, 4],
       [0, 0, 0, 2],
-    ]
+    ];
 
     grid.moveTiles(Direction.Right);
 
@@ -190,14 +215,14 @@ describe("Grid suite", () => {
       [2, 0, 4, 0],
       [2, 512, 64, 8],
       [128, 256, 4, 16],
-    ])
+    ]);
 
     const expectedGrid = [
       [8, 4, 64, 4],
       [2, 4, 0, 0],
       [2, 512, 64, 8],
       [128, 256, 4, 16],
-    ]
+    ];
 
     grid.moveTiles(Direction.Left);
 
@@ -210,19 +235,23 @@ describe("Grid suite", () => {
       [8, 4, 2, 1],
       [1, 2, 4, 8],
       [8, 4, 2, 1],
-    ])
+    ]);
 
     const expectedGrid = [
       [1, 2, 4, 8],
       [8, 4, 2, 1],
       [1, 2, 4, 8],
       [8, 4, 2, 1],
-    ]
+    ];
 
     grid.moveTiles(Direction.Left);
     grid.moveTiles(Direction.Right);
     grid.moveTiles(Direction.Up);
     grid.moveTiles(Direction.Down);
+
+    const gameOver = grid.checkGameOver();
+
+    expect(gameOver).toBeTrue();
 
     assertGridEqual(grid, expectedGrid);
   });
@@ -233,14 +262,14 @@ describe("Grid suite", () => {
       [8, 512, 512, 1],
       [1, 2, 4, 8],
       [8, 4, 2, 1],
-    ])
+    ]);
 
     const expectedGrid = [
       [1, 2, 4, 8],
       [8, 1024, 1, 0],
       [1, 2, 4, 8],
       [8, 4, 2, 1],
-    ]
+    ];
 
     grid.moveTiles(Direction.Left);
 
@@ -253,14 +282,14 @@ describe("Grid suite", () => {
       [0, 0, 0, 0],
       [0, 0, 0, 0],
       [0, 0, 0, 0],
-    ])
+    ]);
 
     const expectedGrid = [
       [8, 0, 0, 0],
       [0, 0, 0, 0],
       [0, 0, 0, 0],
       [0, 0, 0, 0],
-    ]
+    ];
 
     grid.moveTiles(Direction.Left);
 
@@ -273,14 +302,14 @@ describe("Grid suite", () => {
       [32, 0, 0, 0],
       [16, 0, 0, 0],
       [16, 0, 0, 0],
-    ])
+    ]);
 
     const expectedGrid = [
       [64, 0, 0, 0],
       [32, 0, 0, 0],
       [32, 0, 0, 0],
       [0, 0, 0, 0],
-    ]
+    ];
 
     grid.moveTiles(Direction.Up);
 
@@ -293,14 +322,14 @@ describe("Grid suite", () => {
       [4, 0, 0, 0],
       [8, 0, 0, 0],
       [4, 0, 0, 0],
-    ])
+    ]);
 
     const expectedGrid = [
       [4, 0, 0, 0],
       [8, 0, 0, 0],
       [4, 0, 0, 0],
       [0, 0, 0, 0],
-    ]
+    ];
 
     grid.moveTiles(Direction.Up);
 
@@ -313,14 +342,14 @@ describe("Grid suite", () => {
       [64, 2, 2, 2],
       [8, 64, 0, 4],
       [16, 8, 0, 4],
-    ])
+    ]);
 
     const expectedGrid = [
       [256, 4, 32, 4],
       [0, 64, 2, 4],
       [0, 8, 64, 4],
       [0, 16, 8, 4],
-    ]
+    ];
 
     grid.moveTiles(Direction.Right);
 
