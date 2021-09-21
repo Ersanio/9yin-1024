@@ -1,10 +1,9 @@
-<div id="mobilewrap">
-  <div id="grid">
-    <div id="stats">Moves: {{ grid.moveCount }}. Score: {{ grid.score }}. Won: {{ victory }}. Lost: {{ defeat }}.</div>
-    <div id="gamecontainer">
-      <div id="game">
-        <app-grid [grid]='grid'></app-grid>
-      </div>
+<div id="grid">
+  <div id="stats">Moves: {{ grid.moveCount }}. Score: {{ grid.score }}. Won: {{ victory }}. Lost: {{ defeat }}.</div>
+  <div id="gamecontainer">
+    <div id="game">
+      <app-grid [grid]='grid'></app-grid>
     </div>
   </div>
+  <div id="footer">Created by <a href="https://github.com/Ersanio">Ersanio</a>. <a href="https://github.com/Ersanio/9yin-1024">Source</a>.</div>
 </div>
