@@ -1,9 +1,12 @@
 <div id="grid">
   <div id="stats">Moves: {{ grid.moveCount }}. Score: {{ grid.score }}. Won: {{ victory }}. Lost: {{ defeat }}.</div>
-  <div id="gamecontainer">
+  <div id="gamecontainer"
+    (swipeleft)="this.moveTiles(direction.Left);" (swiperight)="this.moveTiles(direction.Right);"
+    (swipeup)="this.moveTiles(direction.Up);" (swipedown)="this.moveTiles(direction.Down);">
     <div id="game">
       <app-grid [grid]='grid'></app-grid>
     </div>
   </div>
-  <div id="footer">Created by <a href="https://github.com/Ersanio">Ersanio</a>. <a href="https://github.com/Ersanio/9yin-1024">Source</a>.</div>
+  <div id="footer">Created by <a href="https://github.com/Ersanio">Ersanio</a>. <a
+      href="https://github.com/Ersanio/9yin-1024">Source</a>.</div>
 </div>

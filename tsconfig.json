@@ -21,6 +21,10 @@
     "lib": [
       "es2018",
       "dom"
+    ],
+    "typeRoots": [
+      "./typings",
+      "./node_modules/@types/"
     ]
   },
   "angularCompilerOptions": {

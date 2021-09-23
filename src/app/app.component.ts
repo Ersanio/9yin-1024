@@ -14,6 +14,11 @@ export class AppComponent implements OnInit {
   public victory: boolean;
   public defeat: boolean;
 
+  public get direction(): typeof Direction {
+    return Direction;
+  }
+
+
   ngOnInit(): void {
     this.victory = false;
     this.defeat = false;
@@ -21,7 +26,7 @@ export class AppComponent implements OnInit {
   }
 
   @HostListener('window:keyup', ['$event'])
-  keyEvent(event: KeyboardEvent) {
+  private keyEvent(event: KeyboardEvent): void {
 
     switch (event.key) {
       case 'ArrowLeft':
@@ -39,8 +44,9 @@ export class AppComponent implements OnInit {
     }
   }
 
-  private moveTiles(direction: Direction) {
+  public moveTiles(direction: Direction): void {
     const moveHasBeenMade = this.grid.moveTiles(direction);
+
     if (moveHasBeenMade) {
       this.grid.generateTilesInRandomEmptyTiles(1);
     }

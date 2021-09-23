@@ -1,9 +1,10 @@
 import { NgModule } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
+import { BrowserModule, HammerModule, HAMMER_GESTURE_CONFIG } from '@angular/platform-browser';
 
 import { AppComponent } from './app.component';
 import { TileComponent } from './components/tile/tile.component';
 import { GridComponent } from './components/grid/grid.component';
+import { CustomHammerConfig } from './hammerconfig';
 
 @NgModule({
   declarations: [
@@ -12,9 +13,15 @@ import { GridComponent } from './components/grid/grid.component';
     GridComponent
   ],
   imports: [
-    BrowserModule
+    BrowserModule,
+    HammerModule
   ],
-  providers: [],
+  providers: [
+    {
+      provide: HAMMER_GESTURE_CONFIG,
+      useClass: CustomHammerConfig
+    }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
