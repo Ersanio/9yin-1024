@@ -1,6 +1,16 @@
 @import "normalize";
 
 body {
-  background-color: gray;
+  background-color: #1a1717;
+  color: #eae7e3;
   font-family: "Clear Sans", "Helvetica Neue", Arial, sans-serif;
+
+  a {
+    color: #ffa523;
+    text-decoration: underline;
+  }
+
+  a:hover {
+    color: lighten(#ffa523, 15%);
+  }
 }

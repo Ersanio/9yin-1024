@@ -298,20 +298,100 @@ describe('Grid suite', () => {
 
   it(`should perform a single merge only - up`, () => {
     grid.setupInitialPredefinedGrid([
-      [64, 0, 0, 0],
-      [32, 0, 0, 0],
-      [16, 0, 0, 0],
-      [16, 0, 0, 0],
+      [8, 0, 0, 0],
+      [4, 0, 0, 0],
+      [2, 0, 0, 0],
+      [2, 0, 0, 0],
     ]);
 
     const expectedGrid = [
-      [64, 0, 0, 0],
-      [32, 0, 0, 0],
-      [32, 0, 0, 0],
+      [8, 0, 0, 0],
+      [4, 0, 0, 0],
+      [4, 0, 0, 0],
       [0, 0, 0, 0],
     ];
 
     grid.moveTiles(Direction.Up);
+
+    assertGridEqual(grid, expectedGrid);
+  });
+
+  it(`should perform a single merge only - down`, () => {
+    grid.setupInitialPredefinedGrid([
+      [2, 0, 0, 0],
+      [2, 0, 0, 0],
+      [4, 0, 0, 0],
+      [8, 0, 0, 0],
+    ]);
+
+    const expectedGrid = [
+      [0, 0, 0, 0],
+      [4, 0, 0, 0],
+      [4, 0, 0, 0],
+      [8, 0, 0, 0],
+    ];
+
+    grid.moveTiles(Direction.Down);
+
+    assertGridEqual(grid, expectedGrid);
+  });
+
+  it(`should perform a single merge only - left`, () => {
+    grid.setupInitialPredefinedGrid([
+      [8, 4, 2, 2],
+      [0, 0, 0, 0],
+      [0, 0, 0, 0],
+      [0, 0, 0, 0],
+    ]);
+
+    const expectedGrid = [
+      [8, 4, 4, 0],
+      [0, 0, 0, 0],
+      [0, 0, 0, 0],
+      [0, 0, 0, 0],
+    ];
+
+    grid.moveTiles(Direction.Left);
+
+    assertGridEqual(grid, expectedGrid);
+  });
+
+  it(`should perform a single merge only - right`, () => {
+    grid.setupInitialPredefinedGrid([
+      [2, 2, 4, 8],
+      [0, 0, 0, 0],
+      [0, 0, 0, 0],
+      [0, 0, 0, 0],
+    ]);
+
+    const expectedGrid = [
+      [0, 4, 4, 8],
+      [0, 0, 0, 0],
+      [0, 0, 0, 0],
+      [0, 0, 0, 0],
+    ];
+
+    grid.moveTiles(Direction.Right);
+
+    assertGridEqual(grid, expectedGrid);
+  });
+
+  it(`should perform a single merge only - right again`, () => {
+    grid.setupInitialPredefinedGrid([
+      [2, 4, 2, 2],
+      [0, 0, 0, 0],
+      [0, 0, 0, 0],
+      [0, 0, 0, 0],
+    ]);
+
+    const expectedGrid = [
+      [0, 0, 2, 8],
+      [0, 0, 0, 0],
+      [0, 0, 0, 0],
+      [0, 0, 0, 0],
+    ];
+
+    grid.moveTiles(Direction.Right);
 
     assertGridEqual(grid, expectedGrid);
   });
@@ -357,7 +437,7 @@ describe('Grid suite', () => {
   });
 });
 
-function assertGridEqual(grid: Grid, expectedGrid: number[][]) {
+function assertGridEqual(grid: Grid, expectedGrid: number[][]): void {
   grid.tiles.forEach(tile => {
     expect(tile.value).toBe(expectedGrid[tile.position.y][tile.position.x]);
   });

@@ -1,15 +1,8 @@
 #grid {
+  // todo: just copy this html and css https://github.com/Ersanio/9yin-chat-history/blob/main/src/app/app.component.scss
   width: 100%;
-  height: 100%;
   display: grid;
-
-  #stats {
-    grid-area: 1 / 1 / 2 / 2;
-    align-self: center;
-    text-align: center;
-    background-color: turquoise;
-    font-size: 3em;
-  }
+  row-gap: 10px;
 
   #gamecontainer {
     grid-area: 2 / 1 / 3 / 2;
@@ -25,14 +18,48 @@
       position: relative;
       width: 624px;
       height: 624px;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      .popup {
+        padding: 20px;
+        background-color: #12100ed0;
+        z-index: 1;
+
+        a:hover {
+          cursor: pointer;
+        }
+      }
     }
   }
 
-  #footer {
-    grid-area: 3 / 1 / 4 / 2;
+  .header {
+    grid-area: 1 / 1 / 2 / 2;
     align-self: center;
-
     text-align: center;
-    background-color: red;
+    background-color: #12100e;
+  }
+
+  .footer {
+    padding: 10px;
+    grid-area: 4 / 1 / 5 / 2;
+    align-self: center;
+    text-align: center;
+  }
+}
+
+@media screen and (max-width: 900px) {
+  .header {
+    font-size: 2em;
+  }
+
+  .footer {
+    font-size: 3em;
+  }
+
+  .popup {
+    font-size: 3em;
   }
 }
