@@ -3,3 +3,9 @@
   --board-size: 624px;
   --tile-size: 90px;
 }
+
+@media (min-width: 768px) {
+  :root {
+    --scale-game: 1;
+  }
+}

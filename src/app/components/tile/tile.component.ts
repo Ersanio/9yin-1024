@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, HostListener, Input, OnInit } from '@angular/core';
 import { Tile } from 'src/app/models/tile';
 
 @Component({
@@ -19,7 +19,16 @@ export class TileComponent implements OnInit {
   @Input()
   public tile: Tile;
 
+  @HostListener('window:resize')
+  private onResize(): void {
+    this.initializeScaleValue();
+  }
+
   public ngOnInit(): void {
+    this.initializeScaleValue();
+  }
+
+  private initializeScaleValue(): void {
     this.gameScale = Number.parseFloat(getComputedStyle(document.querySelector(':root') as Element).getPropertyValue('--scale-game'));
     this.tileSize = Number.parseInt(getComputedStyle(document.querySelector(':root') as Element).getPropertyValue('--tile-size'), 10);
   }
