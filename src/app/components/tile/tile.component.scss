@@ -1,6 +1,7 @@
 .tile {
   position: absolute;
-  width: 90px;
-  height: 90px;
+  width: calc(var(--tile-size) * var(--scale-game));
+  height: calc(var(--tile-size) * var(--scale-game));
+  background-size: calc(900px * var(--scale-game)) calc(90px * var(--scale-game));
   background-image: url('../../../assets/tilemap.png');
 }

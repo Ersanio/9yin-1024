@@ -1,7 +1,7 @@
 .tiles {
   position: absolute;
-  top: 100px;
-  left: 108px;
-  width: 399px;
-  height: 402px;
+  top: calc(100px * var(--scale-game));
+  left: calc(108px * var(--scale-game));
+  width: calc(399px * var(--scale-game));
+  height: calc(402px * var(--scale-game));
 }
