@@ -1,13 +1,13 @@
 <div id="grid">
-  <div class="header"><h1>Moves: {{ grid.moveCount }} - Score: {{ grid.score }}</h1></div>
+  <div class="header"><h1>Moves: {{ grid.currentMoves }} - Score: {{ grid.currentScore }} - Highscore: {{ grid.highScore }}</h1></div>
   <div id="gamecontainer" (swipeleft)="this.moveTiles(direction.Left);" (swiperight)="this.moveTiles(direction.Right);"
     (swipeup)="this.moveTiles(direction.Up);" (swipedown)="this.moveTiles(direction.Down);">
     <div id="game">
       <div *ngIf="defeat" class="popup">You lost!<br />
-        <a (click)="this.startGame()">Retry</a>
+        <a (click)="this.startNewGame()">Retry</a>
       </div>
       <div *ngIf="victory" class="popup">You won!<br />
-        <a (click)="this.startGame()">Restart</a>
+        <a (click)="this.startNewGame()">Restart</a>
       </div>
       <app-grid [grid]='grid'></app-grid>
     </div>

@@ -8,26 +8,30 @@ export class Grid {
   private readonly height: number;
 
   public tiles: Tile[];
-  public score: number;
-  public moveCount: number;
+  public currentScore: number;
+  public currentMoves: number;
+  public highScore: number;
 
   constructor(width: number, height: number, victoryTile: number) {
     this.victoryTile = victoryTile;
     this.width = width;
     this.height = height;
-    this.score = 0;
-    this.moveCount = 0;
+    this.currentScore = 0;
+    this.highScore = 0;
+    this.currentMoves = 0;
     this.clearAllTiles();
     this.generateTilesInRandomEmptyTiles(2);
   }
 
-  public setupInitialPredefinedGrid(values: number[][]) {
+  public setupInitialPredefinedGrid(values: number[][]): void {
     this.generatedPredefinedTiles(values);
   }
 
   public getRelevantTiles(position: Point, vector: Point): Tile[] {
     if (vector.x) {
-      return vector.x === -1 ? this.tiles.filter(tile => tile.position.y === position.y).slice(position.x) : [...this.tiles.filter(tile => tile.position.y === position.y)].reverse().slice(position.x);
+      return vector.x === -1 ?
+        this.tiles.filter(tile => tile.position.y === position.y).slice(position.x) :
+        [...this.tiles.filter(tile => tile.position.y === position.y)].reverse().slice(position.x);
     }
 
     if (vector.y) {
@@ -41,10 +45,10 @@ export class Grid {
     if (this.isPositionOutOfBounds(position)) {
       throw new Error('Requested tile is out of bounds');
     }
-    return this.tiles.find(tile => tile.position.x === position.x && tile.position.y === position.y)!;
+    return this.tiles.find(tile => tile.position.x === position.x && tile.position.y === position.y)!
   }
 
-  public swapTiles(first: Point, second: Point) {
+  public swapTiles(first: Point, second: Point): void {
     const tileA = this.getTile(first);
     const tileB = this.getTile(second);
     const temp = tileA.value;
@@ -90,12 +94,12 @@ export class Grid {
 
         // Current tile equals next tile, thus a merge is possible
         if (!relevantTiles[i].justPromoted && currentTile.value === relevantTiles[i].value) {
-          currentTile.promote();
-          relevantTiles[i].clear();
+          this.promoteTile(currentTile);
+          this.clearTile(relevantTiles[i]);
           relevantTiles = this.getRelevantTiles(tile.position, vector);
           moveHasBeenMade = true;
           if (!simulation) {
-            this.score += currentTile.value;
+            this.currentScore += currentTile.value;
           }
           continue;
         }
@@ -104,7 +108,10 @@ export class Grid {
     this.unlockAllTiles();
 
     if (!simulation && moveHasBeenMade) {
-      this.moveCount++;
+      this.currentMoves++;
+      if (this.currentScore >= this.highScore) {
+        this.highScore = this.currentScore;
+      }
     }
     else {
       this.tiles = currentGrid;
@@ -113,29 +120,51 @@ export class Grid {
     return moveHasBeenMade;
   }
 
+  private clearTile(tile: Tile) {
+    tile.value = 0;
+  }
+
+  private promoteTile(tile: Tile) {
+    tile.value *= 2;
+    tile.justPromoted = true;
+  }
+
   /**
    * Checks if no moves are possible anymore.
    * @returns Whether the game is over or not.
    */
   public checkGameOver(): boolean {
-    return !(this.moveTiles(Direction.Up, true) || this.moveTiles(Direction.Left, true) || this.moveTiles(Direction.Down, true) || this.moveTiles(Direction.Right, true));
+    return !(
+      this.moveTiles(Direction.Up, true) ||
+      this.moveTiles(Direction.Left, true) ||
+      this.moveTiles(Direction.Down, true) ||
+      this.moveTiles(Direction.Right, true));
   }
 
   public checkVictory(): boolean {
     return this.tiles.findIndex(tile => tile.value >= this.victoryTile) !== -1;
   }
 
+  public generateTilesInRandomEmptyTiles(amount: number): void {
+    for (let i = 0; i < amount; i++) {
+      const tile = this.getRandomEmptyTile();
+      if (tile?.position.x !== undefined && tile?.position.y !== undefined) {
+        tile.value = Math.random() < 0.5 ? 2 : 4;
+      }
+    }
+  }
+
   private isPositionOutOfBounds(position: Point): boolean {
     return !((position.x >= 0 && position.x < this.width) && (position.y >= 0 && position.y < this.height));
   }
 
-  private unlockAllTiles() {
+  private unlockAllTiles(): void {
     this.tiles.forEach(tile => {
       tile.justPromoted = false;
     });
   }
 
-  private clearAllTiles() {
+  private clearAllTiles(): void {
     this.tiles = [];
     for (let y = 0; y < this.height; y++) {
       for (let x = 0; x < this.width; x++) {
@@ -144,22 +173,13 @@ export class Grid {
     }
   }
 
-  private generatedPredefinedTiles(numbers: number[][]) {
+  private generatedPredefinedTiles(numbers: number[][]): void {
     numbers.forEach((row, y) => {
       row.forEach((value, x) => {
         const tile = new Tile(new Point(x, y), value);
         this.tiles[y * this.height + x] = tile;
       });
     });
-  }
-
-  public generateTilesInRandomEmptyTiles(amount: number) {
-    for (let i = 0; i < amount; i++) {
-      const tile = this.getRandomEmptyTile();
-      if (tile?.position.x !== undefined && tile?.position.y !== undefined) {
-        tile.value = Math.random() < 0.5 ? 2 : 4;
-      }
-    }
   }
 
   private getRandomEmptyTile(): Tile | undefined {
