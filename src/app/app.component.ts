@@ -15,6 +15,9 @@ export class AppComponent implements OnInit {
 
   public victory: boolean;
   public defeat: boolean;
+  public currentScore: number;
+  public highScore: number;
+  public currentMoves: number;
 
   public get direction(): typeof Direction {
     return Direction;
@@ -37,21 +40,21 @@ export class AppComponent implements OnInit {
   public startNewGame(): void {
     this.victory = false;
     this.defeat = false;
+    this.currentMoves = 0;
+    this.currentScore = 0;
+    this.highScore = this.savestateManager.getSavedHighScore();
     this.deleteSaveState();
     this.grid = new Grid(4, 4, 1024);
-    this.grid.highScore = this.savestateManager.getSavedHighScore();
     this.updateSaveState();
   }
 
   private resumeGame(): void {
-    this.victory = false;
-    this.defeat = false;
     this.grid = new Grid(4, 4, 1024);
     const saveState = this.savestateManager.loadGame();
-    this.grid.tiles = [...saveState.currentTiles];
-    this.grid.currentScore = saveState.currentScore;
-    this.grid.currentMoves = saveState.currentMoves;
-    this.grid.highScore = saveState.highScore;
+    this.grid.tiles = saveState.currentTiles;
+    this.currentScore = saveState.currentScore;
+    this.currentMoves = saveState.currentMoves;
+    this.highScore = saveState.highScore;
   }
 
   @HostListener('window:keyup', ['$event'])
@@ -77,10 +80,16 @@ export class AppComponent implements OnInit {
       return;
     }
 
-    const moveHasBeenMade = this.grid.moveTiles(direction);
+    const moveData = this.grid.moveTiles(direction);
 
-    if (moveHasBeenMade) {
-      this.grid.generateTilesInRandomEmptyTiles(1);
+    if (moveData.moveHasBeenMade) {
+      this.currentMoves++;
+      this.currentScore += moveData.scoreIncrease;
+      if (this.currentScore >= this.highScore) {
+        this.highScore = this.currentScore;
+      }
+
+      this.grid.generateTilesInRandomEmptyCells(1);
       this.updateSaveState();
     }
 
@@ -93,6 +102,9 @@ export class AppComponent implements OnInit {
     }
   }
 
+  /**
+   * Deletes all save data except for high score.
+   */
   private deleteSaveState(): void {
     this.savestateManager.deleteGame();
   }
@@ -100,14 +112,12 @@ export class AppComponent implements OnInit {
   private updateSaveState(): void {
     const saveState = new SaveState(
       this.grid.tiles,
-      this.grid.currentScore,
-      this.grid.highScore,
-      this.grid.currentMoves
+      this.currentScore,
+      this.highScore,
+      this.currentMoves
     );
     this.savestateManager.saveGame(saveState);
   }
 
-  // TODO: save progress in local storage
-  // TODO: BONUS BONUS: Persist score count in local storage
   // TODO: BONUS BONUS BONUS: Animate it all
 }

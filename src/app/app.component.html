@@ -1,5 +1,5 @@
 <div id="grid">
-  <div class="header"><h1>Moves: {{ grid.currentMoves }} - Score: {{ grid.currentScore }} - Highscore: {{ grid.highScore }}</h1></div>
+  <div class="header"><h1>Moves: {{ this.currentMoves }} - Score: {{ this.currentScore }} - Highscore: {{ this.highScore }}</h1></div>
   <div id="gamecontainer" (swipeleft)="this.moveTiles(direction.Left);" (swiperight)="this.moveTiles(direction.Right);"
     (swipeup)="this.moveTiles(direction.Up);" (swipedown)="this.moveTiles(direction.Down);">
     <div id="game">

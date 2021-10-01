@@ -1,4 +1,5 @@
 import { Direction } from './direction';
+import { Move } from './move';
 import { Point } from './point';
 import { Tile } from './tile';
 
@@ -8,19 +9,13 @@ export class Grid {
   private readonly height: number;
 
   public tiles: Tile[];
-  public currentScore: number;
-  public currentMoves: number;
-  public highScore: number;
 
   constructor(width: number, height: number, victoryTile: number) {
     this.victoryTile = victoryTile;
     this.width = width;
     this.height = height;
-    this.currentScore = 0;
-    this.highScore = 0;
-    this.currentMoves = 0;
     this.clearAllTiles();
-    this.generateTilesInRandomEmptyTiles(2);
+    this.generateTilesInRandomEmptyCells(2);
   }
 
   public setupInitialPredefinedGrid(values: number[][]): void {
@@ -45,7 +40,7 @@ export class Grid {
     if (this.isPositionOutOfBounds(position)) {
       throw new Error('Requested tile is out of bounds');
     }
-    return this.tiles.find(tile => tile.position.x === position.x && tile.position.y === position.y)!
+    return this.tiles.find(tile => tile.position.x === position.x && tile.position.y === position.y)!;
   }
 
   public swapTiles(first: Point, second: Point): void {
@@ -56,10 +51,10 @@ export class Grid {
     tileB.value = temp;
   }
 
-  public moveTiles(direction: Direction, simulation: boolean = false): boolean {
+  public moveTiles(direction: Direction, simulation: boolean = false): Move {
     const vector = this.getVector(direction);
     const currentGrid = [...this.tiles].map<Tile>(tile => new Tile(new Point(tile.position.x, tile.position.y), tile.value));
-    let moveHasBeenMade = false;
+    const move = new Move(false, 0);
 
     for (const tile of this.tiles) {
       let relevantTiles = this.getRelevantTiles(tile.position, vector);
@@ -67,39 +62,43 @@ export class Grid {
         continue;
       }
 
-      let currentTileIndex = 0;
+      let destinationTileIndex = 0;
       for (let i = 1; i < relevantTiles.length; i++) {
-        const currentTile = relevantTiles[currentTileIndex];
+        const destinationTile = relevantTiles[destinationTileIndex];
+        const sourceTile = relevantTiles[i];
 
-        // Current tile and next tile are both vacant, or
-        // Current tile is occupied, next tile is vacant
-        if ((currentTile.value === 0 && relevantTiles[i].value === 0)
-          || (currentTile.value !== 0 && relevantTiles[i].value === 0)) {
+        // Destination tile and source tile are both vacant
+        // Destination tile is occupied, source tile is vacant
+        // Thus, nothing happens
+        if ((destinationTile.value === 0 && sourceTile.value === 0)
+          || (destinationTile.value !== 0 && sourceTile.value === 0)) {
           continue;
         }
 
-        // Current tile is vacant, next tile is occupied
-        if (currentTile.value === 0 && relevantTiles[i].value !== 0) {
-          this.swapTiles(currentTile.position, relevantTiles[i].position);
+        // Destination tile is vacant, source tile is occupied
+        // Thus, move tile into vacant tile
+        if (destinationTile.value === 0 && sourceTile.value !== 0) {
+          this.swapTiles(destinationTile.position, sourceTile.position);
           relevantTiles = this.getRelevantTiles(tile.position, vector);
-          moveHasBeenMade = true;
+          move.moveHasBeenMade = true;
           continue;
         }
 
-        // Current tile and next tile are occupied but unequal
-        if (currentTile.value !== relevantTiles[i].value) {
-          currentTileIndex = i;
+        // Destination tile and source tile are occupied but unequal
+        // Thus, nothing happens
+        if (destinationTile.value !== sourceTile.value) {
+          destinationTileIndex = i;
           continue;
         }
 
-        // Current tile equals next tile, thus a merge is possible
-        if (!relevantTiles[i].justPromoted && currentTile.value === relevantTiles[i].value) {
-          this.promoteTile(currentTile);
-          this.clearTile(relevantTiles[i]);
+        // Destination tile equals source tile, thus a merge is possible
+        if (!sourceTile.justPromoted && destinationTile.value === sourceTile.value) {
+          this.promoteTile(destinationTile);
+          this.clearTile(sourceTile);
           relevantTiles = this.getRelevantTiles(tile.position, vector);
-          moveHasBeenMade = true;
+          move.moveHasBeenMade = true;
           if (!simulation) {
-            this.currentScore += currentTile.value;
+            move.scoreIncrease += destinationTile.value;
           }
           continue;
         }
@@ -107,27 +106,13 @@ export class Grid {
     }
     this.unlockAllTiles();
 
-    if (!simulation && moveHasBeenMade) {
-      this.currentMoves++;
-      if (this.currentScore >= this.highScore) {
-        this.highScore = this.currentScore;
-      }
-    }
-    else {
+    if (simulation) {
       this.tiles = currentGrid;
     }
 
-    return moveHasBeenMade;
+    return move;
   }
 
-  private clearTile(tile: Tile) {
-    tile.value = 0;
-  }
-
-  private promoteTile(tile: Tile) {
-    tile.value *= 2;
-    tile.justPromoted = true;
-  }
 
   /**
    * Checks if no moves are possible anymore.
@@ -135,23 +120,32 @@ export class Grid {
    */
   public checkGameOver(): boolean {
     return !(
-      this.moveTiles(Direction.Up, true) ||
-      this.moveTiles(Direction.Left, true) ||
-      this.moveTiles(Direction.Down, true) ||
-      this.moveTiles(Direction.Right, true));
+      this.moveTiles(Direction.Up, true).moveHasBeenMade ||
+      this.moveTiles(Direction.Left, true).moveHasBeenMade ||
+      this.moveTiles(Direction.Down, true).moveHasBeenMade ||
+      this.moveTiles(Direction.Right, true).moveHasBeenMade);
   }
 
   public checkVictory(): boolean {
     return this.tiles.findIndex(tile => tile.value >= this.victoryTile) !== -1;
   }
 
-  public generateTilesInRandomEmptyTiles(amount: number): void {
+  public generateTilesInRandomEmptyCells(amount: number): void {
     for (let i = 0; i < amount; i++) {
       const tile = this.getRandomEmptyTile();
       if (tile?.position.x !== undefined && tile?.position.y !== undefined) {
         tile.value = Math.random() < 0.5 ? 2 : 4;
       }
     }
+  }
+
+  private clearTile(tile: Tile): void {
+    tile.value = 0;
+  }
+
+  private promoteTile(tile: Tile): void {
+    tile.value *= 2;
+    tile.justPromoted = true;
   }
 
   private isPositionOutOfBounds(position: Point): boolean {
