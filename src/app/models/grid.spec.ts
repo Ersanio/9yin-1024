@@ -144,31 +144,6 @@ describe('Grid suite', () => {
     assertGridEqual(grid, expectedGrid);
   });
 
-
-  it(`should move tiles down`, () => {
-    grid.setupInitialPredefinedGrid([
-      [2, 0, 0, 2],
-      [2, 2, 0, 0],
-      [2, 0, 2, 0],
-      [2, 0, 0, 2],
-    ]);
-
-    const expectedGrid = [
-      [0, 0, 0, 0],
-      [0, 0, 0, 0],
-      [4, 0, 0, 0],
-      [4, 2, 2, 4],
-    ];
-
-    grid.moveTiles(Direction.Down);
-
-    const gameOver = grid.checkGameOver();
-
-    expect(gameOver).toBeFalse();
-    assertGridEqual(grid, expectedGrid);
-
-  });
-
   it(`should move tiles left`, () => {
     grid.setupInitialPredefinedGrid([
       [2, 0, 0, 2],
@@ -209,26 +184,6 @@ describe('Grid suite', () => {
     assertGridEqual(grid, expectedGrid);
   });
 
-  it(`should move tiles left - more complex`, () => {
-    grid.setupInitialPredefinedGrid([
-      [8, 4, 64, 4],
-      [2, 0, 4, 0],
-      [2, 512, 64, 8],
-      [128, 256, 4, 16],
-    ]);
-
-    const expectedGrid = [
-      [8, 4, 64, 4],
-      [2, 4, 0, 0],
-      [2, 512, 64, 8],
-      [128, 256, 4, 16],
-    ];
-
-    grid.moveTiles(Direction.Left);
-
-    assertGridEqual(grid, expectedGrid);
-  });
-
   it(`should be in a deadlock`, () => {
     grid.setupInitialPredefinedGrid([
       [1, 2, 4, 8],
@@ -258,6 +213,26 @@ describe('Grid suite', () => {
 
   it(`should move tiles left - more complex`, () => {
     grid.setupInitialPredefinedGrid([
+      [8, 4, 64, 4],
+      [2, 0, 4, 0],
+      [2, 512, 64, 8],
+      [128, 256, 4, 16],
+    ]);
+
+    const expectedGrid = [
+      [8, 4, 64, 4],
+      [2, 4, 0, 0],
+      [2, 512, 64, 8],
+      [128, 256, 4, 16],
+    ];
+
+    grid.moveTiles(Direction.Left);
+
+    assertGridEqual(grid, expectedGrid);
+  });
+
+  it(`should move tiles left - more complex 2`, () => {
+    grid.setupInitialPredefinedGrid([
       [1, 2, 4, 8],
       [8, 512, 512, 1],
       [1, 2, 4, 8],
@@ -272,6 +247,46 @@ describe('Grid suite', () => {
     ];
 
     grid.moveTiles(Direction.Left);
+
+    assertGridEqual(grid, expectedGrid);
+  });
+
+  it(`should merge tiles up`, () => {
+    grid.setupInitialPredefinedGrid([
+      [0, 0, 0, 4],
+      [0, 0, 0, 0],
+      [0, 0, 0, 4],
+      [0, 0, 0, 0],
+    ]);
+
+    const expectedGrid = [
+      [0, 0, 0, 8],
+      [0, 0, 0, 0],
+      [0, 0, 0, 0],
+      [0, 0, 0, 0],
+    ];
+
+    grid.moveTiles(Direction.Up);
+
+    assertGridEqual(grid, expectedGrid);
+  });
+
+  it(`should merge tiles down`, () => {
+    grid.setupInitialPredefinedGrid([
+      [0, 0, 0, 4],
+      [0, 0, 0, 4],
+      [0, 0, 0, 0],
+      [0, 0, 0, 0],
+    ]);
+
+    const expectedGrid = [
+      [0, 0, 0, 0],
+      [0, 0, 0, 0],
+      [0, 0, 0, 0],
+      [0, 0, 0, 8],
+    ];
+
+    grid.moveTiles(Direction.Down);
 
     assertGridEqual(grid, expectedGrid);
   });
@@ -292,6 +307,26 @@ describe('Grid suite', () => {
     ];
 
     grid.moveTiles(Direction.Left);
+
+    assertGridEqual(grid, expectedGrid);
+  });
+
+  it(`should merge tiles right`, () => {
+    grid.setupInitialPredefinedGrid([
+      [0, 0, 4, 4],
+      [0, 0, 0, 0],
+      [0, 0, 0, 0],
+      [0, 0, 0, 0],
+    ]);
+
+    const expectedGrid = [
+      [0, 0, 0, 8],
+      [0, 0, 0, 0],
+      [0, 0, 0, 0],
+      [0, 0, 0, 0],
+    ];
+
+    grid.moveTiles(Direction.Right);
 
     assertGridEqual(grid, expectedGrid);
   });
