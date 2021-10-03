@@ -1,8 +1,8 @@
 <div id="grid">
   <div class="header">
-    <div class="header-block"><div class="header-block-top">MOVES</div><div class="bottom">{{ this.currentMoves }}</div></div>
-    <div class="header-block"><div class="header-block-top">SCORE</div><div class="bottom">{{ this.currentScore }}</div></div>
-    <div class="header-block"><div class="header-block-top">BEST</div><div class="bottom">{{ this.highScore }}</div></div>
+    <div class="header-block"><div class="header-block-top">MOVES</div>{{ this.currentMoves }}</div>
+    <div class="header-block"><div class="header-block-top">SCORE</div>{{ this.currentScore }}</div>
+    <div class="header-block"><div class="header-block-top">BEST</div>{{ this.highScore }}</div>
     <div class="header-block"><a (click)="this.startNewGame()">NEW GAME</a></div>
   </div>
   <div id="gamecontainer" (swipeleft)="this.moveTiles(direction.Left);" (swiperight)="this.moveTiles(direction.Right);"

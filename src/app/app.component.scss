@@ -8,15 +8,16 @@
     justify-self: center;
     text-align: center;
 
-
     #game {
-      background-image: url("../assets/ditu1024.png");
-      background-repeat: no-repeat;
-      background-position: center;
-      background-size: calc(var(--board-size) * var(--scale-game)) calc(var(--board-size) * var(--scale-game));
       position: relative;
       width: calc(var(--board-size) * var(--scale-game));
       height: calc(var(--board-size) * var(--scale-game));
+
+      background-image: url("../assets/ditu1024.png");
+      background-repeat: no-repeat;
+      background-position: center;
+      background-size: calc(var(--board-size) * var(--scale-game))
+        calc(var(--board-size) * var(--scale-game));
 
       display: flex;
       align-items: center;
@@ -33,43 +34,37 @@
   .header {
     background-color: #12100e;
     grid-area: 1 / 1 / 2 / 2;
+    padding: calc(20px * var(--scale-game));
 
     display: grid;
     text-align: center;
     justify-content: center;
-
     grid-template-columns: repeat(4, auto);
-
     column-gap: calc(20px * var(--scale-game));
-    padding: calc(20px * var(--scale-game));
 
     .header-block {
-      a {
-        font-weight: bold;
-        text-decoration: none;
-      }
-      display: grid;
-      align-content: center;
-
       border-radius: 4px;
-
+      background-color: #211d19;
       font-size: calc(1.4em * var(--scale-game));
       width: calc(120px * var(--scale-game));
       height: calc(120px * var(--scale-game));
-      background-color: #211D19;
+
+      display: grid;
+      align-content: center;
 
       .header-block-top {
         font-weight: bold;
       }
 
-      .header-block-bottom {
-
+      a {
+        font-weight: bold;
+        text-decoration: none;
       }
     }
   }
 
   .footer {
-    padding: 10px;
+    padding: 10px calc(20% * var(--scale-game)) 10px calc(20% * var(--scale-game));
     grid-area: 4 / 1 / 5 / 2;
     align-self: center;
     text-align: center;
