@@ -1,5 +1,10 @@
 <div id="grid">
-  <div class="header"><h1>Moves: {{ this.currentMoves }} - Score: {{ this.currentScore }} - Highscore: {{ this.highScore }}</h1></div>
+  <div class="header">
+    <div class="header-block"><div class="header-block-top">MOVES</div><div class="bottom">{{ this.currentMoves }}</div></div>
+    <div class="header-block"><div class="header-block-top">SCORE</div><div class="bottom">{{ this.currentScore }}</div></div>
+    <div class="header-block"><div class="header-block-top">BEST</div><div class="bottom">{{ this.highScore }}</div></div>
+    <div class="header-block"><a (click)="this.startNewGame()">NEW GAME</a></div>
+  </div>
   <div id="gamecontainer" (swipeleft)="this.moveTiles(direction.Left);" (swiperight)="this.moveTiles(direction.Right);"
     (swipeup)="this.moveTiles(direction.Up);" (swipedown)="this.moveTiles(direction.Down);">
     <div id="game">
@@ -13,6 +18,6 @@
     </div>
   </div>
   <div class="footer">Use your arrow keys or swipe with your fingers to move the tiles. Tiles with the same number
-    merge into one when they touch. Add them up to reach 1024!<br /><br />Created by <a href="https://github.com/Ersanio">Ersanio</a>. <a
-      href="https://github.com/Ersanio/9yin-1024">Source</a>.</div>
+    merge into one when they touch. Add them up to reach 1024!<br /><br />Created by <a
+      href="https://github.com/Ersanio">Ersanio</a>. <a href="https://github.com/Ersanio/9yin-1024">Source</a>.</div>
 </div>
