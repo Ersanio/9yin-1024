@@ -23,7 +23,7 @@ export class AppComponent implements OnInit {
     return Direction;
   }
 
-  constructor(private savestateManager: SavestateManagerService) {}
+  constructor(private savestateManager: SavestateManagerService) { }
 
   ngOnInit(): void {
     this.loadGame();
@@ -57,8 +57,14 @@ export class AppComponent implements OnInit {
     this.highScore = saveState.highScore;
   }
 
+  @HostListener('window:keydown', ['$event'])
+  private keyDownEvent(event: KeyboardEvent): void {
+    event.preventDefault();
+  }
+
   @HostListener('window:keyup', ['$event'])
-  private keyEvent(event: KeyboardEvent): void {
+  private keyUpEvent(event: KeyboardEvent): void {
+
     switch (event.key) {
       case 'ArrowLeft':
         this.moveTiles(Direction.Left);
