@@ -59,7 +59,13 @@ export class AppComponent implements OnInit {
 
   @HostListener('window:keydown', ['$event'])
   private keyDownEvent(event: KeyboardEvent): void {
-    event.preventDefault();
+    switch (event.key) {
+      case 'ArrowLeft':
+      case 'ArrowUp':
+      case 'ArrowRight':
+      case 'ArrowDown':
+        event.preventDefault();
+    }
   }
 
   @HostListener('window:keyup', ['$event'])
